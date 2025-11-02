@@ -35,6 +35,3 @@ Implements a finite state machine with multiple behaviors: **Patrol, Chase, Atta
 ## 📸 Screenshots
 ![Patrol Gizmos](Screenshots/gizmos_full.png)  
 ![Attack State](Screenshots/attack.png)
-
-## 📜 License
-This project is licensed under the terms of the repository’s main [LICENSE](../../LICENSE).
