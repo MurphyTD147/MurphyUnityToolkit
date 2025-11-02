@@ -33,7 +33,7 @@ Implements a finite state machine with multiple behaviors: **Patrol, Chase, Atta
 4. Adjust ranges, speeds, and timers to fit your gameplay.
 
 ## 📸 Screenshots
-![Patrol Gizmos](Screenshots/patrol.png)  
+![Patrol Gizmos](Screenshots/gizmos_full.png)  
 ![Attack State](Screenshots/attack.png)
 
 ## 📜 License
