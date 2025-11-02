@@ -1,4 +1,3 @@
-// ShipHealth.cs
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,23 +5,23 @@ using UnityEngine.UI;
 public class ShipHealth : MonoBehaviour
 {
     [Header("Health Parameters")]
-    public float maxHealth = 100f;
-    public float currentHealth;
+    public float maxHealth = 100f;        // maximum health value
+    public float currentHealth;           // current health value at runtime
 
     [Header("Destruction Effects")]
-    public GameObject explosionPrefab;
-    public GameObject smokePrefab;
+    public GameObject explosionPrefab;    // prefab spawned on destruction (explosion effect)
+    public GameObject smokePrefab;        // prefab spawned on destruction (smoke effect)
 
     [Header("Debug")]
-    public bool verboseLogging = false;
+    public bool verboseLogging = false;   // enable detailed debug logs for health events
 
     // Events for subscribers (UI, managers, etc.)
-    public event System.Action<float, float> OnHealthChanged;
-    public event System.Action OnDeath;
+    public event System.Action<float, float> OnHealthChanged; // invoked when health changes (current, max)
+    public event System.Action OnDeath;                       // invoked when object is destroyed
 
     // References set externally (e.g. by a manager)
-    [HideInInspector] public Image healthBarFill;
-    [HideInInspector] public GameOverManager gameOverManager;
+    [HideInInspector] public Image healthBarFill;             // UI health bar fill reference
+    [HideInInspector] public GameOverManager gameOverManager; // reference to game over manager
 
     /// <summary>
     /// Assigns the UI health bar reference.
