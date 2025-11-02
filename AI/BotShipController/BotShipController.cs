@@ -17,80 +17,81 @@ public enum BotState
 public class BotShipController : MonoBehaviour
 {
     [Header("References")]
-    public Transform firePoint;
-    public GameObject projectilePrefab;
-    public ParticleSystem nitroRearLeft, nitroRearRight, nitroFrontLeft, nitroFrontRight;
+    public Transform firePoint;                          // spawn point for projectiles
+    public GameObject projectilePrefab;                  // prefab of the projectile to fire
+    public ParticleSystem nitroRearLeft, nitroRearRight; // rear nitro particle effects
+    public ParticleSystem nitroFrontLeft, nitroFrontRight; // front nitro particle effects
 
     [Header("Speeds")]
-    public float baseSpeed = 20f;
-    public float nitroSpeed = 60f;
-    public float rotationSpeed = 180f;
-    public float evadeSpeed = 40f;
-    public float breakOffSpeed = 30f;
+    public float baseSpeed = 20f;        // default cruising speed
+    public float nitroSpeed = 60f;       // boosted speed when nitro is active
+    public float rotationSpeed = 180f;   // turning speed (yaw/pitch)
+    public float evadeSpeed = 40f;       // speed during evade maneuvers
+    public float breakOffSpeed = 30f;    // speed when breaking off from combat
 
     [Header("Ranges")]
-    public float detectionRange = 200f;
-    public float chaseRange = 120f;
-    public float desiredAttackRange = 80f;
-    public float breakOffRange = 150f;
+    public float detectionRange = 200f;      // distance at which bot detects targets
+    public float chaseRange = 120f;          // distance to start chasing a target
+    public float desiredAttackRange = 80f;   // preferred distance to maintain while attacking
+    public float breakOffRange = 150f;       // distance to disengage and break off
 
     [Header("Attack Strafing")]
-    public float circleTime = 6f;
+    public float circleTime = 6f;            // time to complete one strafe circle around target
 
     [Header("Nitro")]
-    public float nitroMax = 100f;
-    public float nitroDrainRate = 40f;
-    public float nitroRechargeRate = 30f;
-    public float nitroRechargeDelay = 1f;
+    public float nitroMax = 100f;            // maximum nitro capacity
+    public float nitroDrainRate = 40f;       // nitro consumption per second
+    public float nitroRechargeRate = 30f;    // nitro recharge per second
+    public float nitroRechargeDelay = 1f;    // delay before recharge starts after use
 
     [Header("Weapon & Overheat")]
-    public float fireRate = 0.3f;
-    public float firingForce = 800f;
-    public float projectileOffset = 2f;
-    public float heatPerShot = 15f;
-    public float maxHeat = 100f;
-    public float coolDownRate = 20f;
-    public float overheatDelay = 0.5f;
+    public float fireRate = 0.3f;            // time between shots
+    public float firingForce = 800f;         // impulse applied to projectile
+    public float projectileOffset = 2f;      // forward offset for projectile spawn
+    public float heatPerShot = 15f;          // heat generated per shot
+    public float maxHeat = 100f;             // maximum weapon heat
+    public float coolDownRate = 20f;         // cooling rate per second
+    public float overheatDelay = 0.5f;       // delay before cooling starts
 
     [Header("Evade")]
-    public float evadeDuration = 2f;
-    public float evadeRotationSpeed = 180f;
+    public float evadeDuration = 2f;         // duration of evade maneuver
+    public float evadeRotationSpeed = 180f;  // rotation speed during evade
 
     [Header("Patrol")]
-    public float patrolRadius = 50f;
-    public float patrolThreshold = 5f;
+    public float patrolRadius = 50f;         // radius of patrol area
+    public float patrolThreshold = 5f;       // distance threshold to consider patrol point reached
 
     [Header("Attention")]
     [Tooltip("How fast the bot additionally turns to face the target during Attack.")]
-    public float attentionRotationSpeed = 120f;
+    public float attentionRotationSpeed = 120f; // extra rotation speed to face target in attack
 
     [Header("Separation")]
     [Tooltip("Minimum distance from target to avoid ramming.")]
-    public float minSeparationDistance = 25f;
+    public float minSeparationDistance = 25f;   // keep-away distance to avoid collisions
 
     [Header("Hysteresis & Visibility")]
     [Tooltip("Tolerance added/subtracted to range thresholds to avoid state jitter.")]
-    public float rangeTolerance = 5f;
+    public float rangeTolerance = 5f;           // hysteresis buffer for range checks
     [Tooltip("LayerMask used for visibility raycasts.")]
-    public LayerMask visibilityMask = ~0;
+    public LayerMask visibilityMask = ~0;       // layers considered for line-of-sight checks
 
     [Header("Debug")]
-    public bool verboseLogging = false;
+    public bool verboseLogging = false;         // enable detailed debug logs
 
-    // Internal state
-    private BotState state = BotState.Patrol;
-    private Vector3 patrolTarget;
-    private float circleTimer;
-    private float fireTimer;
-    private float currentHeat;
-    private float overheatTimer;
-    private bool isOverheated;
-    private float nitroCurrent;
-    private float nitroRechargeTimer;
-    private bool nitroActive;
-    private float evadeTimer;
-    private float lastHealth;
-    private Rigidbody rb;
+    // ---------------- Internal state ----------------
+    private BotState state = BotState.Patrol;   // current AI state (Patrol, Chase, Attack, etc.)
+    private Vector3 patrolTarget;               // current target point for patrol movement
+    private float circleTimer;                  // timer for strafing/circling behavior
+    private float fireTimer;                    // cooldown timer for firing
+    private float currentHeat;                  // current weapon heat
+    private float overheatTimer;                // timer tracking overheat cooldown delay
+    private bool isOverheated;                  // true if weapon is overheated
+    private float nitroCurrent;                 // current nitro amount
+    private float nitroRechargeTimer;           // timer for nitro recharge delay
+    private bool nitroActive;                   // true if nitro is currently active
+    private float evadeTimer;                   // timer for evade maneuver duration
+    private float lastHealth;                   // cached health value to detect damage taken
+    private Rigidbody rb;                       // cached rigidbody reference for physics
 
     /// <summary>
     /// Initializes references and sets initial patrol target.
